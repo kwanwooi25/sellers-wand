@@ -1,6 +1,6 @@
 'use client';
 
-import { KeywordItem, getExcelFileReader } from '@/lib/excel';
+import { KeywordItem, getExcelFileReader } from '@/lib/excel/keyword-analysis';
 import { LucideFileUp } from 'lucide-react';
 import { ComponentProps } from 'react';
 import Dropzone from '.';

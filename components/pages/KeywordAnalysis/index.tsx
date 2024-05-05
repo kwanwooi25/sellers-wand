@@ -4,7 +4,7 @@ import { KeywordData, KeywordSearchResult } from '@/app/api/search_coupang/types
 import ItemScoutExcelFileDropzone from '@/components/Dropzone/ItemScoutExcelFileDropzone';
 import Loading from '@/components/icons/Loading';
 import { Button } from '@/components/ui/button';
-import { KeywordItem } from '@/lib/excel';
+import { KeywordItem } from '@/lib/excel/keyword-analysis';
 import axios from 'axios';
 import chunk from 'lodash/chunk';
 import { ComponentProps, useState } from 'react';
@@ -14,11 +14,6 @@ export default function KeywordAnalysisPage() {
   const [isAnalyzingAll, setIsAnalyzingAll] = useState(false);
   const [loadingKeywords, setLoadingKeywords] = useState<string[]>([]);
   const [keywordData, setKeywordData] = useState<Record<string, KeywordData>>({});
-
-  const totalKeywordCount = Object.keys(keywordData).length;
-  const completedKeywordCount = Object.values(keywordData).filter(
-    (k) => k.rocketRatio !== undefined,
-  ).length;
 
   const handleExcelLoad: ComponentProps<typeof ItemScoutExcelFileDropzone>['onChange'] = async (
     items,
@@ -59,7 +54,9 @@ export default function KeywordAnalysisPage() {
   };
 
   const handleClickSearch = async () => {
-    const keywordDataList = Object.values(keywordData);
+    const keywordDataList = Object.values(keywordData).filter(
+      ({ rocketRatio }) => rocketRatio !== undefined,
+    );
     const chunkedKeywordDataList = chunk(keywordDataList, 20);
 
     setIsAnalyzingAll(true);
@@ -74,21 +71,25 @@ export default function KeywordAnalysisPage() {
     setIsAnalyzingAll(false);
   };
 
+  const removeKeyword = (keyword: string) => {
+    setKeywordData((prev) => {
+      return Object.keys(prev)
+        .filter((k) => k !== keyword)
+        .reduce((keywordData, key) => {
+          return { ...keywordData, [key]: prev[key] };
+        }, {} satisfies Record<string, KeywordData>);
+    });
+  };
+
   return (
     <>
       <ItemScoutExcelFileDropzone onChange={handleExcelLoad} />
 
-      <div className="mt-4 flex items-center gap-4">
-        <Button onClick={handleClickSearch} disabled={isAnalyzingAll}>
+      <div className="w-full mt-4 flex items-center justify-between gap-4">
+        <Button className="ml-auto" onClick={handleClickSearch} disabled={isAnalyzingAll}>
           {isAnalyzingAll && <Loading className="mr-2 h-4 w-4" />}
           키워드 전체 분석
         </Button>
-        {isAnalyzingAll && (
-          <span>
-            키워드별 쿠팡 상위 랭킹의 배송 방식을 분석중입니다... ({completedKeywordCount} /{' '}
-            {totalKeywordCount})
-          </span>
-        )}
       </div>
 
       <ul className="py-4 flex flex-col gap-2">
@@ -98,6 +99,7 @@ export default function KeywordAnalysisPage() {
             keywordData={item}
             isLoading={loadingKeywords.includes(item.keywordItem.keyword)}
             onClickAnalysis={() => analyzeKeyword(item.keywordItem)}
+            onRemove={() => removeKeyword(item.keywordItem.keyword)}
           />
         ))}
       </ul>
