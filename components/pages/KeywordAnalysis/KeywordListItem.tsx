@@ -2,12 +2,12 @@
 
 import { COUPANG_HOST } from '@/app/api/search_coupang/const';
 import { KeywordData } from '@/app/api/search_coupang/types';
+import DeliveryBadge from '@/components/icons/DeliveryBadge';
+import Loading from '@/components/icons/Loading';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import Loading from './icons/Loading';
-import { Button } from './ui/button';
-import DeliveryBadge from './icons/DeliveryBadge';
-import Link from 'next/link';
 import { LucideExternalLink } from 'lucide-react';
+import Link from 'next/link';
 
 export default function KeywordListItem({
   keywordData,

@@ -1,20 +1,14 @@
 'use client';
 
-import { cn } from '@/lib/utils';
-import { usePathname } from 'next/navigation';
 import {
   NavigationMenu,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
-} from './ui/navigation-menu';
-
-const NAV_LIST = [
-  {
-    href: '/keyword-analysis',
-    label: '키워드 분석',
-  },
-];
+} from '@/components/ui/navigation-menu';
+import { cn } from '@/lib/utils';
+import { usePathname } from 'next/navigation';
+import { NAV_LIST } from './const';
 
 export default function Navigation() {
   const pathname = usePathname();

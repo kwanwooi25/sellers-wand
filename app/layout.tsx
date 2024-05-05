@@ -1,11 +1,11 @@
-import Logo from '@/components/Logo';
-import Navigation from '@/components/Navigation';
-import ThemeToggle from '@/components/ThemeToggle';
+import GlobalHeader from '@/components/GlobalHeader';
+import { auth } from '@/lib/auth';
+import { cn } from '@/lib/utils';
+import AuthProvider from '@/providers/AuthProvider';
+import ThemeProvider from '@/providers/ThemeProvider';
 import type { Metadata } from 'next';
 import { Noto_Sans_KR } from 'next/font/google';
-import Link from 'next/link';
 import './globals.css';
-import ThemeProvider from '@/providers/ThemeProvider';
 
 const notoSans = Noto_Sans_KR({ subsets: ['latin'] });
 
@@ -17,29 +17,27 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
+
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={notoSans.className}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <header className="py-2 px-4 sticky w-full top-0 shadow-sm z-header bg-background/95 backdrop-blur border-b border-border/40 flex justify-between items-center">
-            <Link href="/" className="flex items-center gap-2">
-              <Logo height={32} withText />
-            </Link>
-            <Navigation />
-            <ThemeToggle />
-          </header>
-          {children}
-        </ThemeProvider>
+      <body className={cn(notoSans.className, 'min-h-screen flex flex-col')}>
+        <AuthProvider session={session}>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <GlobalHeader />
+            <main className="w-full max-w-4xl px-2 py-4 mx-auto flex-1">{children}</main>
+          </ThemeProvider>
+        </AuthProvider>
       </body>
     </html>
   );

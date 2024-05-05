@@ -20,6 +20,7 @@ const config = {
     extend: {
       zIndex: {
         header: '9999',
+        aboveHeader: '10000',
       },
       colors: {
         border: 'hsl(var(--border))',

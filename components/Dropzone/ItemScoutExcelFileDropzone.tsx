@@ -3,7 +3,7 @@
 import { KeywordItem, getExcelFileReader } from '@/lib/excel';
 import { LucideFileUp } from 'lucide-react';
 import { ComponentProps } from 'react';
-import Dropzone from './Dropzone';
+import Dropzone from '.';
 
 export default function ItemScoutExcelFileDropzone({ onChange }: Props) {
   const handleDrop: ComponentProps<typeof Dropzone>['onDrop'] = async (acceptedFiles) => {
