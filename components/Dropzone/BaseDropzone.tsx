@@ -18,9 +18,9 @@ export default function Dropzone({
   return (
     <div
       className={cn(
-        'border-card-foreground hover:border-card-foreground/50 text-card-foreground hover:text-card-foreground/50 flex h-full w-full cursor-pointer items-center justify-center rounded-lg border border-dashed transition-colors py-2 px-4',
+        'border-card-foreground hover:opacity-70 text-card-foreground flex h-full w-full cursor-pointer items-center justify-center rounded-lg border border-dashed transition-opacity py-2 px-4',
         {
-          'border-card-foreground/50 text-card-foreground/50': isDragActive,
+          'opacity-70': isDragActive,
           'cursor-not-allowed': isLoading || disabled,
         },
         className,

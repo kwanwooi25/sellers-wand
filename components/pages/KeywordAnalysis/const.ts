@@ -1,4 +1,4 @@
-export const DEFAULT_KEYWORD_ITEM = {
+export const DEFAULT_ITEM = {
   keywordLink: '',
   rank: 0,
   keyword: '',
@@ -21,7 +21,7 @@ export const DEFAULT_KEYWORD_ITEM = {
   costPerClick: 0,
 };
 
-export const LABEL_TO_KEY: { [key: string]: keyof typeof DEFAULT_KEYWORD_ITEM } = {
+export const LABEL_TO_KEY: Record<string, keyof typeof DEFAULT_ITEM> = {
   '상세정보 확인': 'keywordLink',
   순위: 'rank',
   키워드: 'keyword',

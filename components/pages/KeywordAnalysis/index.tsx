@@ -1,24 +1,32 @@
 'use client';
 
 import { KeywordData, KeywordSearchResult } from '@/app/api/search_coupang/types';
-import ItemScoutExcelFileDropzone from '@/components/Dropzone/ItemScoutExcelFileDropzone';
+import ExcelFileDropzone from '@/components/Dropzone/ExcelFileDropzone';
 import Loading from '@/components/icons/Loading';
 import { Button } from '@/components/ui/button';
-import { KeywordItem } from '@/lib/excel/keyword-analysis';
 import axios from 'axios';
 import chunk from 'lodash/chunk';
-import { ComponentProps, useState } from 'react';
+import { LucideX } from 'lucide-react';
+import { useState } from 'react';
 import KeywordListItem from './KeywordListItem';
+import { DEFAULT_ITEM, LABEL_TO_KEY } from './const';
 
 export default function KeywordAnalysisPage() {
+  const [fileName, setFileName] = useState('');
   const [isAnalyzingAll, setIsAnalyzingAll] = useState(false);
   const [loadingKeywords, setLoadingKeywords] = useState<string[]>([]);
   const [keywordData, setKeywordData] = useState<Record<string, KeywordData>>({});
 
-  const handleExcelLoad: ComponentProps<typeof ItemScoutExcelFileDropzone>['onChange'] = async (
-    items,
-  ) => {
+  const reset = () => {
+    setFileName('');
     setKeywordData({});
+    setLoadingKeywords([]);
+    setIsAnalyzingAll(false);
+  };
+
+  const handleExcelLoad = async (items: (typeof DEFAULT_ITEM)[], fileName: string = '') => {
+    setKeywordData({});
+    setFileName(fileName);
 
     items.forEach((item) => {
       setKeywordData((prev) => ({
@@ -28,7 +36,7 @@ export default function KeywordAnalysisPage() {
     });
   };
 
-  const analyzeKeyword = async (keywordItem: KeywordItem) => {
+  const analyzeKeyword = async (keywordItem: typeof DEFAULT_ITEM) => {
     const key = keywordItem.keyword;
     setLoadingKeywords((prev) => [...prev, key]);
 
@@ -83,26 +91,48 @@ export default function KeywordAnalysisPage() {
 
   return (
     <>
-      <ItemScoutExcelFileDropzone onChange={handleExcelLoad} />
+      {!fileName && !Object.keys(keywordData).length && (
+        <ExcelFileDropzone
+          onChange={handleExcelLoad}
+          defaultItem={DEFAULT_ITEM}
+          labelKeyMap={LABEL_TO_KEY}
+          fileTypeName={<b className="text-sm underline text-green-700">아이템 스카우트 키워드</b>}
+        />
+      )}
 
-      <div className="w-full mt-4 flex items-center justify-between gap-4">
-        <Button className="ml-auto" onClick={handleClickSearch} disabled={isAnalyzingAll}>
-          {isAnalyzingAll && <Loading className="mr-2 h-4 w-4" />}
-          키워드 전체 분석
-        </Button>
-      </div>
+      {!!fileName && (
+        <div className="mb-4 flex items-center justify-between gap-4">
+          <span className="truncate">{fileName}</span>
+          <div className="flex items-center gap-2 shrink-0">
+            <Button className="rounded-full" onClick={reset} variant="ghost" size="icon">
+              <LucideX size={28} />
+            </Button>
+          </div>
+        </div>
+      )}
 
-      <ul className="py-4 flex flex-col gap-2">
-        {Object.values(keywordData).map((item) => (
-          <KeywordListItem
-            key={item.keywordItem.keyword}
-            keywordData={item}
-            isLoading={loadingKeywords.includes(item.keywordItem.keyword)}
-            onClickAnalysis={() => analyzeKeyword(item.keywordItem)}
-            onRemove={() => removeKeyword(item.keywordItem.keyword)}
-          />
-        ))}
-      </ul>
+      {!!Object.keys(keywordData).length && (
+        <>
+          <div className="w-full mt-4 flex items-center justify-between gap-4">
+            <Button className="ml-auto" onClick={handleClickSearch} disabled={isAnalyzingAll}>
+              {isAnalyzingAll && <Loading className="mr-2 h-4 w-4" />}
+              키워드 전체 분석
+            </Button>
+          </div>
+
+          <ul className="py-4 flex flex-col gap-2">
+            {Object.values(keywordData).map((item) => (
+              <KeywordListItem
+                key={item.keywordItem.keyword}
+                keywordData={item}
+                isLoading={loadingKeywords.includes(item.keywordItem.keyword)}
+                onClickAnalysis={() => analyzeKeyword(item.keywordItem)}
+                onRemove={() => removeKeyword(item.keywordItem.keyword)}
+              />
+            ))}
+          </ul>
+        </>
+      )}
     </>
   );
 }

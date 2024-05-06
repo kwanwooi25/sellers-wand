@@ -1,16 +1,25 @@
 'use client';
 
-import { KeywordItem, getExcelFileReader } from '@/lib/excel/keyword-analysis';
+import { getExcelFileReader } from '@/lib/excel';
 import { LucideFileUp } from 'lucide-react';
-import { ComponentProps } from 'react';
-import Dropzone from '.';
+import { ComponentProps, ReactNode } from 'react';
+import Dropzone from './BaseDropzone';
 
-export default function ItemScoutExcelFileDropzone({ onChange }: Props) {
+export default function ExcelFileDropzone<T>({
+  onChange,
+  defaultItem,
+  labelKeyMap,
+  fileTypeName,
+}: Props<T>) {
   const handleDrop: ComponentProps<typeof Dropzone>['onDrop'] = async (acceptedFiles) => {
     if (!acceptedFiles.length) return;
 
     const file = acceptedFiles[0];
-    const reader = getExcelFileReader(onChange);
+    const reader = getExcelFileReader({
+      handler: (items) => onChange(items, file.name),
+      defaultItem,
+      labelKeyMap,
+    });
     reader.readAsArrayBuffer(file);
   };
 
@@ -26,7 +35,7 @@ export default function ItemScoutExcelFileDropzone({ onChange }: Props) {
             <br />
             <span className="text-sm font-bold">클릭</span>하여
             <br />
-            아이템 스카우트 키워드 엑셀 파일 업로드
+            {fileTypeName} 엑셀 파일 업로드
           </p>
         </div>
       }
@@ -40,6 +49,9 @@ export default function ItemScoutExcelFileDropzone({ onChange }: Props) {
   );
 }
 
-type Props = {
-  onChange: (items: KeywordItem[]) => void | Promise<void>;
+type Props<T> = {
+  onChange: (items: T[], fileName?: string) => void | Promise<void>;
+  defaultItem: T;
+  labelKeyMap: Record<string, keyof T>;
+  fileTypeName?: ReactNode;
 };
