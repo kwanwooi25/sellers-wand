@@ -90,7 +90,7 @@ export default function KeywordAnalysisPage() {
   };
 
   return (
-    <>
+    <div className="max-w-3xl mx-auto px-2 py-4">
       {!fileName && !Object.keys(keywordData).length && (
         <ExcelFileDropzone
           onChange={handleExcelLoad}
@@ -133,6 +133,6 @@ export default function KeywordAnalysisPage() {
           </ul>
         </>
       )}
-    </>
+    </div>
   );
 }

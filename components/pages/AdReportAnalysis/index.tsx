@@ -39,7 +39,7 @@ export default function AdReportAnalysisPage() {
   };
 
   return (
-    <>
+    <div className="max-w-5xl mx-auto px-2 py-4">
       {!fileName && !adReportRows.length && (
         <ExcelFileDropzone
           onChange={handleExcelLoad}
@@ -88,6 +88,6 @@ export default function AdReportAnalysisPage() {
           <Table rawRows={filteredAdReportRows} />
         </>
       )}
-    </>
+    </div>
   );
 }

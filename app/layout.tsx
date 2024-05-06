@@ -5,6 +5,7 @@ import AuthProvider from '@/providers/AuthProvider';
 import ThemeProvider from '@/providers/ThemeProvider';
 import type { Metadata } from 'next';
 import { Noto_Sans_KR } from 'next/font/google';
+import NextTopLoader from 'nextjs-toploader';
 import './globals.css';
 
 const notoSans = Noto_Sans_KR({ subsets: ['latin'] });
@@ -34,8 +35,9 @@ export default async function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
+            <NextTopLoader color="gray" zIndex={99999} />
             <GlobalHeader />
-            <main className="w-full max-w-4xl px-2 py-4 mx-auto flex-1">{children}</main>
+            <main className="w-full flex-1 relative">{children}</main>
           </ThemeProvider>
         </AuthProvider>
       </body>
