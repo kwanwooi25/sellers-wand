@@ -5,13 +5,13 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["driverAdapters"]
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("POSTGRES_PRISMA_URL")
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL")
   directUrl = env("POSTGRES_URL_NON_POOLING")
 }
 
@@ -21,8 +21,14 @@ model User {
   email         String          @unique
   emailVerified DateTime?
   image         String?
+  grade         UserGrade       @default(GUEST)
   accounts      Account[]
   sessions      Session[]
+  products      Product[]
+  inventories   Inventory[]
+  sales         Sales[]
+  purchases     Purchase[]
+  expenses      Expense[]
   // Optional for WebAuthn supportØ
   Authenticator Authenticator[]
 
@@ -82,4 +88,123 @@ model Authenticator {
   transports           String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Product {
+  id                String       @id @default(cuid())
+  vendorProductId   String // 업체상품ID
+  productId         String // 노출ID
+  optionId          String       @unique
+  status            String
+  barcode           String
+  vendorProductCode String // 업체상품 코드
+  productName       String // 쿠팡 노출 상품명
+  vendorProductName String // 업체 등록 상품명
+  vendorOptionName  String // 업체 등록 옵션명
+  deliveryType      DeliveryType
+  salesFeeRate      Float // 판매 수수료율
+  deliveryCost      Int // 입출고배송비
+  couponPrice       Int // 쿠폰할인가
+  quantity          Int // 구성수량
+  leadtime          Int // 입고 소요 기간 (주)
+  isMain            Boolean      @default(false) // 주력상품 여부
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  inventories Inventory[]
+  sales       Sales[]
+  purchases   Purchase[]
+}
+
+model Inventory {
+  id String @id @default(cuid())
+
+  grade                   InventoryGrade
+  availableQuantity       Int
+  expectedRestockQuantity Int
+
+  productOptionId String  @unique
+  product         Product @relation(fields: [productOptionId], references: [optionId])
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+}
+
+model Sales {
+  id                               String @id @default(cuid())
+  productId                        String // 노출 ID
+  netSalesAmount                   Int // 순 판매 금액
+  netSalesQuantity                 Int // 순 판매 수량
+  grossSalesAmount                 Int // 전체 판매 금액
+  grossSalesQuantity               Int // 전체 판매 수량
+  canceledSalesAmount              Int // 취소 금액
+  canceledSalesQuantity            Int // 취소 수량
+  immediatelyCanceledSalesQuantity Int // 즉시 취소 수량
+
+  productOptionId String
+  product         Product @relation(fields: [productOptionId], references: [optionId])
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+}
+
+model Purchase {
+  id                   String    @id @default(cuid())
+  unitPrice            Float // 구매단가
+  deliveryCost         Float
+  currency             Currency
+  currencyExchangeRate Int?
+  stockingFee          Int
+  purchaseDate         DateTime
+  stockingDate         DateTime?
+
+  productOptionId String
+  product         Product @relation(fields: [productOptionId], references: [optionId])
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+}
+
+model Expense {
+  id     String      @id @default(cuid())
+  date   DateTime
+  detail String // 내용
+  amount Int
+  type   ExpenseType
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+}
+
+enum UserGrade {
+  GUEST
+  GENERAL
+  POWER
+  ADMIN
+}
+
+enum DeliveryType {
+  ROCKET
+  GROWTH
+  WING
+  GLOBAL
+}
+
+enum InventoryGrade {
+  NEW // 신상품
+  REFUND_UNOPENED // 반품-미개봉
+  REFUND_BEST // 반품-최상
+  REFUND_BETTER // 반품-상
+  REFUND_GOOD // 반품-중
+}
+
+enum ExpenseType {
+  AD
+  ETC
+}
+
+enum Currency {
+  KRW
+  CNY
 }
