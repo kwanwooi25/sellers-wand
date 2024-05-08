@@ -1,5 +1,4 @@
-import GlobalHeader from '@/components/GlobalHeader';
-import { GNB_HEIGHT } from '@/const/layout';
+import MainLayout from '@/components/layouts/MainLayout';
 import { auth } from '@/lib/auth';
 import { cn } from '@/lib/utils';
 import AuthProvider from '@/providers/AuthProvider';
@@ -37,10 +36,7 @@ export default async function RootLayout({
             disableTransitionOnChange
           >
             <NextTopLoader color="gray" zIndex={99999} />
-            <GlobalHeader />
-            <main className="w-full flex-1 relative" style={{ marginTop: GNB_HEIGHT }}>
-              {children}
-            </main>
+            <MainLayout>{children}</MainLayout>
           </ThemeProvider>
         </AuthProvider>
       </body>

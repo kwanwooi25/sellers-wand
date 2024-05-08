@@ -1,15 +1,16 @@
-import { auth } from '@/lib/auth';
-import { headers } from 'next/headers';
+'use client';
+
+import { GNB_HEIGHT } from '@/const/layout';
+import { useSession } from 'next-auth/react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import Logo from '../Logo';
 import Navigation from '../Navigation';
 import UserMenu from '../UserMenu';
-import { GNB_HEIGHT } from '@/const/layout';
 
-export default async function GlobalHeader() {
-  const session = await auth();
-  const headerList = headers();
-  const pathname = headerList.get('x-pathname');
+export default function GlobalHeader() {
+  const session = useSession();
+  const pathname = usePathname();
 
   return (
     <header
