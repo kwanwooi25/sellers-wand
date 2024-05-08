@@ -2,6 +2,11 @@
 
 import ExcelFileDropzone from '@/components/Dropzone/ExcelFileDropzone';
 import FileNameDisplay from '@/components/FileNameDisplay';
+import { Button } from '@/components/ui/button';
+import { useToast } from '@/components/ui/use-toast';
+import { getNumberDisplay } from '@/lib/string';
+import { SuccessResponse } from '@/types/api';
+import axios from 'axios';
 import { LucideExternalLink } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -10,6 +15,7 @@ import { DEFAULT_ITEM, LABEL_TO_KEY } from './const';
 import { ProductToCreate } from './types';
 
 export default function ProductsPage() {
+  const { toast } = useToast();
   const [fileName, setFileName] = useState('');
   const [productsToCreate, setProductsToCreate] = useState<ProductToCreate[]>([]);
 
@@ -19,8 +25,29 @@ export default function ProductsPage() {
   };
 
   const handleExcelLoad = (items: ProductToCreate[], fileName: string = '') => {
-    setProductsToCreate(items);
+    setProductsToCreate(
+      items.map((item) => ({ ...item, deliveryType: item.barcode ? 'GROWTH' : item.deliveryType })),
+    );
     setFileName(fileName);
+  };
+
+  const saveProducts = async () => {
+    try {
+      const { data } = await axios.post<SuccessResponse<number>>('/api/products', {
+        products: productsToCreate,
+      });
+      toast({
+        title: `${getNumberDisplay(data.data, { suffix: '개' })}의 상품이 신규 등록되었습니다.`,
+        variant: 'success',
+      });
+      reset();
+    } catch (error) {
+      toast({
+        title: '상품 목록 저장에 실패했습니다.',
+        description: (error as any).message,
+        variant: 'destructive',
+      });
+    }
   };
 
   return (
@@ -48,7 +75,14 @@ export default function ProductsPage() {
 
       {!!fileName && <FileNameDisplay fileName={fileName} onRemove={reset} />}
 
-      {!!productsToCreate.length && <ProductTable products={productsToCreate} />}
+      {!!productsToCreate.length && (
+        <div className="flex flex-col gap-4">
+          <div className="flex justify-end gap-2">
+            <Button onClick={saveProducts}>상품 목록 저장</Button>
+          </div>
+          <ProductTable products={productsToCreate} onChange={setProductsToCreate} />
+        </div>
+      )}
     </div>
   );
 }

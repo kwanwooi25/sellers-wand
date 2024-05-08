@@ -1,14 +1,11 @@
 import DeliveryBadge from '@/components/icons/DeliveryBadge';
-import { Button } from '@/components/ui/button';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem } from '@/components/ui/dropdown-menu';
 import { getNumberDisplay } from '@/lib/string';
 import { cn } from '@/lib/utils';
 import { Product } from '@prisma/client';
-import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
-import { LucideEdit3, LucideMoreVertical } from 'lucide-react';
 import { ProductToCreate } from '../types';
+import RowActions from './RowActions';
 
-export default function Row({ className, data }: Props) {
+export default function Row({ className, data, onChange }: Props) {
   const {
     productName,
     vendorProductId,
@@ -56,19 +53,7 @@ export default function Row({ className, data }: Props) {
         <span>{getNumberDisplay(leadtime, { suffix: '주' })}</span>
       </td>
       <td>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon">
-              <LucideMoreVertical />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="!min-w-min" side="left" align="start">
-            <DropdownMenuItem>
-              <LucideEdit3 className="w-4 h-4 mr-2" />
-              <span>수정</span>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <RowActions data={data} onChange={onChange} />
       </td>
     </tr>
   );
@@ -77,4 +62,5 @@ export default function Row({ className, data }: Props) {
 type Props = {
   className?: string;
   data: Product | ProductToCreate;
+  onChange: (data: Props['data']) => void;
 };

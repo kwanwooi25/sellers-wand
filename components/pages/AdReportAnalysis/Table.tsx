@@ -35,7 +35,7 @@ export default function Table({ rawRows }: Props) {
 
   return (
     <table className="w-full">
-      <thead className="sticky backdrop-blur z-header" style={{ top: GNB_HEIGHT }}>
+      <thead className="sticky backdrop-blur z-10" style={{ top: GNB_HEIGHT }}>
         <TableHeaderRow />
       </thead>
       <tbody>

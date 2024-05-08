@@ -9,7 +9,7 @@ type GetNumberDisplayOptions = {
 export function getNumberDisplay(input: number | string, options?: GetNumberDisplayOptions) {
   const { prefix, suffix, comma = true, decimalPlaces = 0, defaultValue = '-' } = options || {};
 
-  if (!input) return defaultValue;
+  if (typeof input !== 'number' && !input) return defaultValue;
 
   let number = comma ? input.toLocaleString() : `${input}`;
   if (typeof decimalPlaces === 'number') {

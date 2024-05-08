@@ -9,7 +9,7 @@ import { ProductToCreate } from '../types';
 import HeaderRow from './HeaderRow';
 import Row from './Row';
 
-export default function ProductTable({ products }: Props) {
+export default function ProductTable({ products, onChange }: Props) {
   const [page, setPage] = useState(1);
   const paginatedProducts = chunk(products, 10);
   const lastPage = paginatedProducts.length;
@@ -19,12 +19,22 @@ export default function ProductTable({ products }: Props) {
   return (
     <>
       <table className="w-full mb-4">
-        <thead className="sticky backdrop-blur z-header" style={{ top: GNB_HEIGHT }}>
+        <thead className="sticky backdrop-blur z-10" style={{ top: GNB_HEIGHT }}>
           <HeaderRow />
         </thead>
         <tbody>
-          {productsToDisplay.map((product, i) => (
-            <Row key={product.optionId} data={product} />
+          {productsToDisplay.map((product) => (
+            <Row
+              key={product.optionId}
+              data={product}
+              onChange={(data) => {
+                const newProducts = products.map((p) => {
+                  if (data.optionId === p.optionId) return data;
+                  return p;
+                });
+                onChange(newProducts);
+              }}
+            />
           ))}
         </tbody>
       </table>
@@ -36,4 +46,5 @@ export default function ProductTable({ products }: Props) {
 
 type Props = {
   products: (Product | ProductToCreate)[];
+  onChange: (data: Props['products']) => void;
 };

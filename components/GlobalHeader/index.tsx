@@ -14,7 +14,7 @@ export default function GlobalHeader() {
 
   return (
     <header
-      className="py-2 px-4 fixed w-full top-0 shadow-sm z-header bg-background/95 backdrop-blur border-b border-border/40 flex justify-between items-center"
+      className="py-2 px-4 fixed w-full top-0 z-10 shadow-sm backdrop-blur border-b border-border/40 flex justify-between items-center"
       style={{ height: GNB_HEIGHT }}
     >
       <Link href="/" className="flex items-center gap-2">

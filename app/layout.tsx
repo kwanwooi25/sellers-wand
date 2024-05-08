@@ -1,4 +1,5 @@
 import MainLayout from '@/components/layouts/MainLayout';
+import { Toaster } from '@/components/ui/toaster';
 import { auth } from '@/lib/auth';
 import { cn } from '@/lib/utils';
 import AuthProvider from '@/providers/AuthProvider';
@@ -37,6 +38,7 @@ export default async function RootLayout({
           >
             <NextTopLoader color="gray" zIndex={99999} />
             <MainLayout>{children}</MainLayout>
+            <Toaster />
           </ThemeProvider>
         </AuthProvider>
       </body>
