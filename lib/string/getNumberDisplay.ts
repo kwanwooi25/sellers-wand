@@ -3,7 +3,7 @@ type GetNumberDisplayOptions = {
   suffix?: string;
   comma?: boolean;
   decimalPlaces?: number;
-  defaultValue?: string | number;
+  defaultValue?: string;
 };
 
 export function getNumberDisplay(input: number | string, options?: GetNumberDisplayOptions) {

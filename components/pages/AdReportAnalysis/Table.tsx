@@ -1,3 +1,4 @@
+import { GNB_HEIGHT } from '@/const/layout';
 import { useMemo } from 'react';
 import TableHeaderRow from './TableHeaderRow';
 import TableRow from './TableRow';
@@ -34,7 +35,7 @@ export default function Table({ rawRows }: Props) {
 
   return (
     <table className="w-full">
-      <thead className="sticky top-[56px] backdrop-blur z-header">
+      <thead className="sticky backdrop-blur z-header" style={{ top: GNB_HEIGHT }}>
         <TableHeaderRow />
       </thead>
       <tbody>

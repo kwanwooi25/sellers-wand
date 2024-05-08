@@ -5,10 +5,12 @@ type GetExcelFileReaderOptions<T> = {
   handler: (result: T[]) => void;
   defaultItem: T;
   labelKeyMap: Record<string, keyof T>;
+  dataRange?: string;
 };
 
 export function getExcelFileReader<T>({
   handler,
+  dataRange,
   defaultItem,
   labelKeyMap,
 }: GetExcelFileReaderOptions<T>) {
@@ -18,7 +20,9 @@ export function getExcelFileReader<T>({
 
     const data = new Uint8Array(e.target.result as ArrayBufferLike);
     const workbook = read(data, { type: 'array' });
-    const array = utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
+    let worksheet = workbook.Sheets[workbook.SheetNames[0]];
+    const array = utils.sheet_to_json(worksheet, { range: dataRange });
+
     const items: T[] = array
       .map((row) => generateItem({ row, defaultItem, labelKeyMap }))
       .filter((item) => !isEqual(item, defaultItem));

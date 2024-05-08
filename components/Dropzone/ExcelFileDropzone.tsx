@@ -9,6 +9,7 @@ export default function ExcelFileDropzone<T>({
   onChange,
   defaultItem,
   labelKeyMap,
+  dataRange,
   fileTypeName,
 }: Props<T>) {
   const handleDrop: ComponentProps<typeof Dropzone>['onDrop'] = async (acceptedFiles) => {
@@ -19,6 +20,7 @@ export default function ExcelFileDropzone<T>({
       handler: (items) => onChange(items, file.name),
       defaultItem,
       labelKeyMap,
+      dataRange,
     });
     reader.readAsArrayBuffer(file);
   };
@@ -53,5 +55,6 @@ type Props<T> = {
   onChange: (items: T[], fileName?: string) => void | Promise<void>;
   defaultItem: T;
   labelKeyMap: Record<string, keyof T>;
+  dataRange?: string;
   fileTypeName?: ReactNode;
 };

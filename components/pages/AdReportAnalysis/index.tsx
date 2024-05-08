@@ -1,9 +1,9 @@
 'use client';
 
 import ExcelFileDropzone from '@/components/Dropzone/ExcelFileDropzone';
+import FileNameDisplay from '@/components/FileNameDisplay';
 import { Button } from '@/components/ui/button';
 import uniq from 'lodash/uniq';
-import { LucideX } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import SelectProduct from './SelectProduct';
 import SelectedProduct from './SelectedProduct';
@@ -39,7 +39,7 @@ export default function AdReportAnalysisPage() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto px-2 py-4">
+    <div className="max-w-6xl mx-auto px-2 py-4">
       {!fileName && !adReportRows.length && (
         <ExcelFileDropzone
           onChange={handleExcelLoad}
@@ -49,16 +49,7 @@ export default function AdReportAnalysisPage() {
         />
       )}
 
-      {!!fileName && (
-        <div className="mb-4 flex items-center justify-between gap-4">
-          <span className="truncate">{fileName}</span>
-          <div className="flex items-center gap-2 shrink-0">
-            <Button className="rounded-full" onClick={reset} variant="ghost" size="icon">
-              <LucideX size={28} />
-            </Button>
-          </div>
-        </div>
-      )}
+      {!!fileName && <FileNameDisplay fileName={fileName} onRemove={reset} />}
 
       {!!adReportRows.length && (
         <>
