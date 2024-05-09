@@ -1,7 +1,8 @@
-import { ProductToCreate } from '@/components/pages/Products/types';
+import { ProductToCreate } from '@/components/pages/AddProducts/types';
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { FailedResponse, SuccessResponse } from '@/types/api';
+import { Product } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
@@ -10,7 +11,7 @@ export async function POST(request: NextRequest) {
 
   if (!userId) {
     return NextResponse.json<FailedResponse>(
-      { result: 'FAILED', message: 'Not authorized' },
+      { result: 'FAILED', data: null, message: 'Not authorized' },
       { status: 403 },
     );
   }
@@ -22,7 +23,33 @@ export async function POST(request: NextRequest) {
     return NextResponse.json<SuccessResponse<number>>({ result: 'SUCCESS', data: res.count });
   } catch (error) {
     return NextResponse.json<FailedResponse>(
-      { result: 'FAILED', message: (error as any).message ?? 'Internal server error' },
+      { result: 'FAILED', data: null, message: (error as any).message ?? 'Internal server error' },
+      { status: (error as any).status ?? 500 },
+    );
+  }
+}
+
+export async function PATCH(request: NextRequest) {
+  const session = await auth();
+  const userId = session?.user?.id;
+
+  if (!userId) {
+    return NextResponse.json<FailedResponse>(
+      { result: 'FAILED', data: null, message: 'Not authorized' },
+      { status: 403 },
+    );
+  }
+
+  try {
+    const { product }: { product: Product } = await request.json();
+    const updatedProduct = await prisma.product.update({
+      where: { id: product.id },
+      data: product,
+    });
+    return NextResponse.json<SuccessResponse<Product>>({ result: 'SUCCESS', data: updatedProduct });
+  } catch (error) {
+    return NextResponse.json<FailedResponse>(
+      { result: 'FAILED', data: null, message: (error as any).message ?? 'Internal server error' },
       { status: (error as any).status ?? 500 },
     );
   }

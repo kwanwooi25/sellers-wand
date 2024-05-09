@@ -1,49 +1,40 @@
 'use client';
 
-import ExcelFileDropzone from '@/components/Dropzone/ExcelFileDropzone';
-import FileNameDisplay from '@/components/FileNameDisplay';
+import PageHeader from '@/components/PageHeader';
+import Pagination from '@/components/Pagination';
+import ProductTable from '@/components/ProductTable';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
-import { getNumberDisplay } from '@/lib/string';
-import { SuccessResponse } from '@/types/api';
-import axios from 'axios';
-import { LucideExternalLink } from 'lucide-react';
-import Link from 'next/link';
-import { useState } from 'react';
-import ProductTable from './ProductTable';
-import { DEFAULT_ITEM, LABEL_TO_KEY } from './const';
-import { ProductToCreate } from './types';
+import { PATHS } from '@/const/paths';
+import { useCreateQueryString } from '@/hooks/useCreateQueryString';
+import { getProducts, updateProduct } from '@/services/product';
+import { Product } from '@prisma/client';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
-export default function ProductsPage() {
+export default function ProductsPage({ products, lastPage }: Props) {
   const { toast } = useToast();
-  const [fileName, setFileName] = useState('');
-  const [productsToCreate, setProductsToCreate] = useState<ProductToCreate[]>([]);
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const createQueryString = useCreateQueryString();
+  const page = +(searchParams.get('page') || 1);
 
-  const reset = () => {
-    setProductsToCreate([]);
-    setFileName('');
+  const handlePageChange = (page: number) => {
+    router.push(`${pathname}?${createQueryString('page', `${page}`)}`);
   };
 
-  const handleExcelLoad = (items: ProductToCreate[], fileName: string = '') => {
-    setProductsToCreate(
-      items.map((item) => ({ ...item, deliveryType: item.barcode ? 'GROWTH' : item.deliveryType })),
-    );
-    setFileName(fileName);
-  };
-
-  const saveProducts = async () => {
+  const handleProductChange = async (product: Product) => {
     try {
-      const { data } = await axios.post<SuccessResponse<number>>('/api/products', {
-        products: productsToCreate,
-      });
+      const { data } = await updateProduct(product);
       toast({
-        title: `${getNumberDisplay(data.data, { suffix: '개' })}의 상품이 신규 등록되었습니다.`,
+        title: '상품 정보를 수정했습니다.',
+        description: `${data.data?.productName}`,
         variant: 'success',
       });
-      reset();
+      router.refresh();
     } catch (error) {
       toast({
-        title: '상품 목록 저장에 실패했습니다.',
+        title: '상품 정보 수정에 실패했습니다.',
         description: (error as any).message,
         variant: 'destructive',
       });
@@ -52,37 +43,25 @@ export default function ProductsPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-2 py-4">
-      {!fileName && !productsToCreate.length && (
-        <div className="flex flex-col gap-2">
-          <ExcelFileDropzone
-            onChange={handleExcelLoad}
-            defaultItem={DEFAULT_ITEM}
-            labelKeyMap={LABEL_TO_KEY}
-            dataRange={'A3:I99999'}
-            fileTypeName={<b className="text-sm underline text-red-700">상품 목록</b>}
-          />
-          <Link
-            className="flex items-center text-sm transition-opacity opacity-70 hover:opacity-100 underline"
-            href="https://wing.coupang.com/vendor-inventory/list"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            <LucideExternalLink className="w-4 h-4 mr-1" />
-            {'쿠팡 윙 > 상품 관리 > 상품 조회/수정 > 엑셀 다운로드 요청'}
-          </Link>
+      <PageHeader title="상품 목록">
+        <Button onClick={() => router.push(PATHS.ADD_PRODUCTS_PAGE)}>상품 등록</Button>
+      </PageHeader>
+      {!products.length ? (
+        <div className="flex flex-col items-center py-16 gap-4">
+          <p>등록된 상품이 없습니다.</p>
+          <p>
+            <Button onClick={() => router.push(PATHS.ADD_PRODUCTS_PAGE)}>상품 등록</Button> 버튼을
+            눌러 상품을 추가하세요.
+          </p>
         </div>
-      )}
-
-      {!!fileName && <FileNameDisplay fileName={fileName} onRemove={reset} />}
-
-      {!!productsToCreate.length && (
-        <div className="flex flex-col gap-4">
-          <div className="flex justify-end gap-2">
-            <Button onClick={saveProducts}>상품 목록 저장</Button>
-          </div>
-          <ProductTable products={productsToCreate} onChange={setProductsToCreate} />
-        </div>
+      ) : (
+        <>
+          <ProductTable products={products} onProductChange={handleProductChange} />
+          <Pagination currentPage={page} onChange={handlePageChange} lastPage={lastPage} />
+        </>
       )}
     </div>
   );
 }
+
+type Props = Awaited<ReturnType<typeof getProducts>>;

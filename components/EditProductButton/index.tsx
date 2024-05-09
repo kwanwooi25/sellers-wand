@@ -19,7 +19,7 @@ import { LucideEdit3 } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { ProductToCreate } from '../types';
+import { ProductToCreate } from '../pages/AddProducts/types';
 
 const formSchema = z.object({
   vendorProductId: z.string(),
@@ -45,7 +45,10 @@ const formSchema = z.object({
   isMain: z.boolean(),
 });
 
-export default function RowActions({ data, onChange }: Props) {
+export default function EditProductButton<T extends Product | ProductToCreate>({
+  data,
+  onChange,
+}: Props<T>) {
   const [isOpen, setIsOpen] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -71,13 +74,13 @@ export default function RowActions({ data, onChange }: Props) {
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     onChange({
-      ...values,
+      ...data,
       salesFeeRate: +values.salesFeeRate,
       deliveryCost: +values.deliveryCost,
       couponPrice: +values.couponPrice,
       quantity: +values.quantity,
       leadtime: +values.leadtime,
-    });
+    } as T);
     setIsOpen(false);
   };
 
@@ -197,7 +200,7 @@ export default function RowActions({ data, onChange }: Props) {
   );
 }
 
-type Props = {
-  data: Product | ProductToCreate;
-  onChange: (data: Props['data']) => void;
+type Props<T> = {
+  data: T;
+  onChange: (data: T) => void;
 };

@@ -2,10 +2,14 @@ import DeliveryBadge from '@/components/icons/DeliveryBadge';
 import { getNumberDisplay } from '@/lib/string';
 import { cn } from '@/lib/utils';
 import { Product } from '@prisma/client';
-import { ProductToCreate } from '../types';
-import RowActions from './RowActions';
+import { PropsWithChildren } from 'react';
+import { ProductToCreate } from '../pages/AddProducts/types';
 
-export default function Row({ className, data, onChange }: Props) {
+export default function Row<T extends Product | ProductToCreate>({
+  className,
+  data,
+  children,
+}: Props<T>) {
   const {
     productName,
     vendorProductId,
@@ -52,15 +56,12 @@ export default function Row({ className, data, onChange }: Props) {
       <td className="flex flex-col items-center">
         <span>{getNumberDisplay(leadtime, { suffix: '주' })}</span>
       </td>
-      <td>
-        <RowActions data={data} onChange={onChange} />
-      </td>
+      <td>{children}</td>
     </tr>
   );
 }
 
-type Props = {
+type Props<T> = PropsWithChildren<{
   className?: string;
-  data: Product | ProductToCreate;
-  onChange: (data: Props['data']) => void;
-};
+  data: T;
+}>;

@@ -36,6 +36,11 @@ export default function Pagination({
           <PaginationPrevious aria-disabled={currentPage === firstPage} />
         </PaginationItem>
         {!pagesToDisplay.includes(firstPage) && (
+          <PaginationItem onClick={() => moveToPage(firstPage)}>
+            <PaginationLink isActive={firstPage === currentPage}>{firstPage}</PaginationLink>
+          </PaginationItem>
+        )}
+        {!pagesToDisplay.includes(firstPage) && !pagesToDisplay.includes(firstPage + 1) && (
           <PaginationItem>
             <PaginationEllipsis />
           </PaginationItem>
@@ -45,9 +50,14 @@ export default function Pagination({
             <PaginationLink isActive={p === currentPage}>{p}</PaginationLink>
           </PaginationItem>
         ))}
-        {!pagesToDisplay.includes(lastPage) && (
+        {!pagesToDisplay.includes(lastPage) && !pagesToDisplay.includes(lastPage - 1) && (
           <PaginationItem>
             <PaginationEllipsis />
+          </PaginationItem>
+        )}
+        {!pagesToDisplay.includes(lastPage) && (
+          <PaginationItem onClick={() => moveToPage(lastPage)}>
+            <PaginationLink isActive={lastPage === currentPage}>{lastPage}</PaginationLink>
           </PaginationItem>
         )}
         <PaginationItem onClick={moveToNextPage}>
