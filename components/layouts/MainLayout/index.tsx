@@ -1,12 +1,14 @@
+'use client';
+
 import GlobalHeader from '@/components/GlobalHeader';
 import SideNavigation from '@/components/Navigation/SideNavigation';
 import { NAV_LIST } from '@/components/Navigation/const';
 import { GNB_HEIGHT, LNB_WIDTH } from '@/const/layout';
-import { getUrl } from '@/lib/url';
+import { usePathname } from 'next/navigation';
 import { PropsWithChildren } from 'react';
 
 export default function MainLayout({ children }: PropsWithChildren) {
-  const { pathname } = getUrl();
+  const pathname = usePathname();
   const currentNav = NAV_LIST.find(({ href }) => pathname?.includes(href));
   const { href, submenus } = currentNav || {};
 
