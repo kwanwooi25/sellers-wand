@@ -1,4 +1,4 @@
-import { KeywordItem } from '@/lib/excel/keyword-analysis';
+import { KeywordItem } from '@/components/pages/KeywordAnalysis/types';
 import { getKeywordSearchResult } from './utils';
 
 export type CoupangDeliveryType = 'ROCKET' | 'GROWTH' | 'WING' | 'GLOBAL';
