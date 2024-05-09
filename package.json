@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "vercel-build": "prisma generate && prisma migrate deploy && next build",
+    "vercel-build": "pnpm dlx prisma generate && pnpm dlx prisma migrate deploy && next build",
     "migrate:dev": "dotenv -e .env.local -- pnpm dlx prisma migrate dev",
     "prisma:studio": "dotenv -e .env.local -- pnpm dlx prisma studio"
   },
