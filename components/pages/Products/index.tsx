@@ -3,6 +3,7 @@
 import PageHeader from '@/components/PageHeader';
 import Pagination from '@/components/Pagination';
 import ProductTable from '@/components/ProductTable';
+import SearchInput from '@/components/SearchInput';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { PATHS } from '@/const/paths';
@@ -21,6 +22,10 @@ export default function ProductsPage({ products, lastPage }: Props) {
 
   const handlePageChange = (page: number) => {
     router.push(`${pathname}?${createQueryString('page', `${page}`)}`);
+  };
+
+  const handleSearch = (input: string) => {
+    router.push(`${pathname}?${createQueryString('search', `${input}`)}`);
   };
 
   const handleProductChange = async (product: Product) => {
@@ -55,10 +60,11 @@ export default function ProductsPage({ products, lastPage }: Props) {
           </p>
         </div>
       ) : (
-        <>
+        <div className="flex flex-col gap-4">
+          <SearchInput onSearch={handleSearch} placeholder="상품명으로 검색" />
           <ProductTable products={products} onProductChange={handleProductChange} />
           <Pagination currentPage={page} onChange={handlePageChange} lastPage={lastPage} />
-        </>
+        </div>
       )}
     </div>
   );

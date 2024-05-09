@@ -10,8 +10,9 @@ export default withAuth(async () => {
   const { searchParams } = getUrl();
   const page = +(searchParams.get('page') ?? 1);
   const per = +(searchParams.get('per') ?? DEFAULT_PER);
+  const search = searchParams.get('search') ?? '';
 
-  const res = await getProducts({ page, per });
+  const res = await getProducts({ page, per, search });
 
   if (page > 1 && !res.products.length) {
     return redirect(PATHS.PRODUCTS_PAGE);

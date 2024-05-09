@@ -5,9 +5,11 @@ import { prisma } from '@/lib/prisma';
 export async function getProducts({
   page = 1,
   per = DEFAULT_PER,
+  search = '',
 }: {
   page?: number;
   per?: number;
+  search?: string;
 }) {
   const session = await auth();
   const userId = session?.user?.id;
@@ -20,10 +22,12 @@ export async function getProducts({
     };
   }
 
+  const where = { userId, productName: { contains: search } };
+
   const [count, products] = await Promise.all([
-    prisma.product.count({ where: { userId } }),
+    prisma.product.count({ where }),
     prisma.product.findMany({
-      where: { userId },
+      where,
       skip: (page - 1) * per,
       take: per,
       orderBy: { optionId: 'asc' },
