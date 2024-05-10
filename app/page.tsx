@@ -1,4 +1,4 @@
-import Navigation from '@/components/Navigation';
+import DashboardPage from '@/components/pages/Dashboard';
 import { withAuth } from '@/lib/auth/hoc';
 
-export default withAuth(Navigation);
+export default withAuth(DashboardPage);
