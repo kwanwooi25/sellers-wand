@@ -11,8 +11,8 @@ import Providers from './providers';
 const notoSans = Noto_Sans_KR({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: '셀러의 지팡이',
-  description: '셀러의 마법지팡이',
+  title: '셀러의 요술봉',
+  description: '셀러의 요술봉',
   icons: {
     icon: '/sellers-wand_favicon.png',
   },

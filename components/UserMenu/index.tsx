@@ -1,14 +1,18 @@
 'use client';
 
+import { PATHS } from '@/const/paths';
 import {
+  LucideLogIn,
   LucideLogOut,
   LucideMoon,
-  LucideMoreVertical,
   LucideSettings,
   LucideSun,
+  LucideUser,
 } from 'lucide-react';
+import { useSession } from 'next-auth/react';
 import { useTheme } from 'next-themes';
 import { useRouter } from 'next/navigation';
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Button } from '../ui/button';
 import {
   DropdownMenu,
@@ -25,12 +29,23 @@ import {
 export default function UserMenu({ className }: Props) {
   const { theme, setTheme } = useTheme();
   const router = useRouter();
+  const session = useSession();
+  const isAuthenticated = session.status === 'authenticated';
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon">
-          <LucideMoreVertical size={24} />
+          <Avatar>
+            <AvatarImage src={session.data?.user.image ?? ''} />
+            <AvatarFallback>
+              {!!session.data?.user.name ? (
+                session.data?.user.name.charAt(0).toUpperCase()
+              ) : (
+                <LucideUser />
+              )}
+            </AvatarFallback>
+          </Avatar>
         </Button>
       </DropdownMenuTrigger>
 
@@ -60,10 +75,17 @@ export default function UserMenu({ className }: Props) {
               </DropdownMenuSubContent>
             </DropdownMenuPortal>
           </DropdownMenuSub>
-          <DropdownMenuItem onClick={() => router.push('/api/auth/signout')}>
-            <LucideLogOut className="mr-2 h-4 w-4" />
-            <span>Logout</span>
-          </DropdownMenuItem>
+          {isAuthenticated ? (
+            <DropdownMenuItem onClick={() => router.push(PATHS.SIGN_OUT)}>
+              <LucideLogOut className="mr-2 h-4 w-4" />
+              <span>Logout</span>
+            </DropdownMenuItem>
+          ) : (
+            <DropdownMenuItem onClick={() => router.push(PATHS.SIGN_IN)}>
+              <LucideLogIn className="mr-2 h-4 w-4" />
+              <span>Login</span>
+            </DropdownMenuItem>
+          )}
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>

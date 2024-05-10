@@ -19,7 +19,7 @@ export default function MainLayout({ children }: PropsWithChildren) {
         {submenus?.length ? (
           <>
             <div
-              className="fixed left-0 bottom-0 px-4 py-2 border-r border-border/30"
+              className="fixed left-0 bottom-0 px-4 py-2 border-r border-border/70"
               style={{ top: GNB_HEIGHT, width: LNB_WIDTH }}
             >
               <SideNavigation rootPath={href} navList={submenus} />

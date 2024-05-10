@@ -1,3 +1,5 @@
+'use client';
+
 import { GNB_HEIGHT } from '@/const/layout';
 import Link from 'next/link';
 import Logo from '../Logo';
