@@ -1,0 +1,1 @@
+export { getInventories } from './getInventories';
