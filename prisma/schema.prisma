@@ -109,6 +109,9 @@ model Product {
   leadtime          Int // 입고 소요 기간 (주)
   isMain            Boolean      @default(false) // 주력상품 여부
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   userId String
   user   User   @relation(fields: [userId], references: [id])
 
@@ -123,6 +126,9 @@ model Inventory {
   grade                   InventoryGrade
   availableQuantity       Int
   expectedRestockQuantity Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   productOptionId String  @unique
   product         Product @relation(fields: [productOptionId], references: [optionId])
@@ -142,6 +148,9 @@ model Sales {
   canceledSalesQuantity            Int // 취소 수량
   immediatelyCanceledSalesQuantity Int // 즉시 취소 수량
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   productOptionId String
   product         Product @relation(fields: [productOptionId], references: [optionId])
 
@@ -159,6 +168,9 @@ model Purchase {
   purchaseDate         DateTime
   stockingDate         DateTime?
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   productOptionId String
   product         Product @relation(fields: [productOptionId], references: [optionId])
 
@@ -172,6 +184,9 @@ model Expense {
   detail String // 내용
   amount Int
   type   ExpenseType
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   userId String
   user   User   @relation(fields: [userId], references: [id])
