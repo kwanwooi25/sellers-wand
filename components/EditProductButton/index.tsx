@@ -14,12 +14,11 @@ import {
 import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { DeliveryType, Product } from '@prisma/client';
+import { DeliveryType, Prisma, Product } from '@prisma/client';
 import { LucideEdit3 } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { ProductToCreate } from '../pages/AddProducts/types';
 
 const formSchema = z.object({
   vendorProductId: z.string(),
@@ -45,7 +44,7 @@ const formSchema = z.object({
   isMain: z.boolean(),
 });
 
-export default function EditProductButton<T extends Product | ProductToCreate>({
+export default function EditProductButton<T extends Product | Prisma.ProductCreateManyUserInput>({
   data,
   onChange,
 }: Props<T>) {

@@ -10,6 +10,7 @@ import { DEFAULT_PER } from '@/const/api';
 import { PATHS } from '@/const/paths';
 import { getNumberDisplay } from '@/lib/string';
 import { SuccessResponse } from '@/types/api';
+import { Prisma } from '@prisma/client';
 import axios from 'axios';
 import chunk from 'lodash/chunk';
 import { LucideExternalLink, LucideX } from 'lucide-react';
@@ -17,13 +18,12 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import { DEFAULT_ITEM, LABEL_TO_KEY } from './const';
-import { ProductToCreate } from './types';
 
 export default function AddProductsPage({ existingOptionIds = [] }: Props) {
   const router = useRouter();
   const { toast } = useToast();
   const [fileName, setFileName] = useState('');
-  const [productsToCreate, setProductsToCreate] = useState<ProductToCreate[]>([]);
+  const [productsToCreate, setProductsToCreate] = useState<Prisma.ProductCreateManyUserInput[]>([]);
   const [page, setPage] = useState(1);
 
   const { chunkedProducts, lastPage } = useMemo(
@@ -39,7 +39,7 @@ export default function AddProductsPage({ existingOptionIds = [] }: Props) {
     setFileName('');
   };
 
-  const handleExcelLoad = (items: ProductToCreate[], fileName: string = '') => {
+  const handleExcelLoad = (items: Prisma.ProductCreateManyUserInput[], fileName: string = '') => {
     const filteredItems = items.filter(({ optionId }) => !existingOptionIds.includes(optionId));
 
     if (!filteredItems.length) {
@@ -59,7 +59,7 @@ export default function AddProductsPage({ existingOptionIds = [] }: Props) {
     setFileName(fileName);
   };
 
-  const handleProductChange = (product: ProductToCreate) => {
+  const handleProductChange = (product: Prisma.ProductCreateManyUserInput) => {
     setProductsToCreate((prev) => prev.map((p) => (p.optionId === product.optionId ? product : p)));
   };
 

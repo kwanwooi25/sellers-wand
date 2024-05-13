@@ -1,6 +1,6 @@
-import { ProductToCreate } from './types';
+import { Prisma } from '@prisma/client';
 
-export const DEFAULT_ITEM: ProductToCreate = {
+export const DEFAULT_ITEM: Prisma.ProductCreateManyUserInput = {
   vendorProductId: '',
   productId: '',
   optionId: '',
@@ -19,7 +19,7 @@ export const DEFAULT_ITEM: ProductToCreate = {
   isMain: false,
 };
 
-export const LABEL_TO_KEY: Record<string, keyof ProductToCreate> = {
+export const LABEL_TO_KEY: Record<string, keyof typeof DEFAULT_ITEM> = {
   '업체상품 ID': 'vendorProductId',
   'Product ID': 'productId',
   '옵션 ID': 'optionId',

@@ -11,9 +11,10 @@ export default function ExcelFileDropzone<T>({
   labelKeyMap,
   dataRange,
   fileTypeName,
+  onDrop,
 }: Props<T>) {
   const handleDrop: ComponentProps<typeof Dropzone>['onDrop'] = async (acceptedFiles) => {
-    if (!acceptedFiles.length) return;
+    if (!acceptedFiles.length || !onChange || !defaultItem || !labelKeyMap) return;
 
     const file = acceptedFiles[0];
     const reader = getExcelFileReader({
@@ -45,16 +46,26 @@ export default function ExcelFileDropzone<T>({
         'application/vnd.ms-excel': [],
         'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': [],
       }}
-      onDrop={handleDrop}
+      onDrop={onDrop || handleDrop}
       maxFiles={1}
     />
   );
 }
 
-type Props<T> = {
-  onChange: (items: T[], fileName?: string) => void | Promise<void>;
-  defaultItem: T;
-  labelKeyMap: Record<string, keyof T>;
-  dataRange?: string;
-  fileTypeName?: ReactNode;
-};
+type Props<T> =
+  | {
+      fileTypeName?: ReactNode;
+      onChange: (items: T[], fileName?: string) => void | Promise<void>;
+      defaultItem: T;
+      labelKeyMap: Record<string, keyof T>;
+      dataRange?: string;
+      onDrop?: never;
+    }
+  | {
+      fileTypeName?: ReactNode;
+      onChange?: never;
+      defaultItem?: never;
+      labelKeyMap?: never;
+      dataRange?: never;
+      onDrop: ComponentProps<typeof Dropzone>['onDrop'];
+    };

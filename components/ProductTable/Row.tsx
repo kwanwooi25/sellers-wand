@@ -1,11 +1,10 @@
 import DeliveryBadge from '@/components/icons/DeliveryBadge';
 import { getNumberDisplay } from '@/lib/string';
 import { cn } from '@/lib/utils';
-import { Product } from '@prisma/client';
+import { Prisma, Product } from '@prisma/client';
 import { PropsWithChildren } from 'react';
-import { ProductToCreate } from '../pages/AddProducts/types';
 
-export default function Row<T extends Product | ProductToCreate>({
+export default function Row<T extends Product | Prisma.ProductCreateManyUserInput>({
   className,
   data,
   children,

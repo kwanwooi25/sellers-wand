@@ -2,12 +2,11 @@
 
 import EditProductButton from '@/components/EditProductButton';
 import { GNB_HEIGHT } from '@/const/layout';
-import { Product } from '@prisma/client';
-import { ProductToCreate } from '../pages/AddProducts/types';
+import { Prisma, Product } from '@prisma/client';
 import HeaderRow from './HeaderRow';
 import Row from './Row';
 
-export default function ProductTable<T extends Product | ProductToCreate>({
+export default function ProductTable<T extends Product | Prisma.ProductCreateManyUserInput>({
   products,
   onProductChange,
 }: Props<T>) {

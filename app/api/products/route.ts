@@ -1,8 +1,7 @@
-import { ProductToCreate } from '@/components/pages/AddProducts/types';
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { FailedResponse, SuccessResponse } from '@/types/api';
-import { Product } from '@prisma/client';
+import { Prisma, Product } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
@@ -17,7 +16,7 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const { products }: { products: ProductToCreate[] } = await request.json();
+    const { products }: { products: Prisma.ProductCreateManyUserInput[] } = await request.json();
     const productsToCreate = products?.map((product) => ({ ...product, userId }));
     const res = await prisma.product.createMany({ data: productsToCreate, skipDuplicates: true });
     return NextResponse.json<SuccessResponse<number>>({ result: 'SUCCESS', data: res.count });

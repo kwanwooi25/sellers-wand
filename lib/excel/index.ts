@@ -6,6 +6,7 @@ type GetExcelFileReaderOptions<T> = {
   defaultItem: T;
   labelKeyMap: Record<string, keyof T>;
   dataRange?: string;
+  generateItemFn?: (options: GenerateItemOptions<T>) => T;
 };
 
 export function getExcelFileReader<T>({
@@ -13,6 +14,7 @@ export function getExcelFileReader<T>({
   dataRange,
   defaultItem,
   labelKeyMap,
+  generateItemFn = generateItem,
 }: GetExcelFileReaderOptions<T>) {
   const reader = new FileReader();
   reader.onload = (e) => {
@@ -24,7 +26,7 @@ export function getExcelFileReader<T>({
     const array = utils.sheet_to_json(worksheet, { range: dataRange });
 
     const items: T[] = array
-      .map((row) => generateItem({ row, defaultItem, labelKeyMap }))
+      .map((row) => generateItemFn({ row, defaultItem, labelKeyMap }))
       .filter((item) => !isEqual(item, defaultItem));
     handler(items);
   };
@@ -37,7 +39,7 @@ type GenerateItemOptions<T> = {
   labelKeyMap: GetExcelFileReaderOptions<T>['labelKeyMap'];
 };
 
-function generateItem<T>({ row, defaultItem, labelKeyMap }: GenerateItemOptions<T>) {
+export function generateItem<T>({ row, defaultItem, labelKeyMap }: GenerateItemOptions<T>) {
   return Object.entries(row).reduce((generatedRow, [key, value]) => {
     const newKey: keyof T = labelKeyMap[key];
 
